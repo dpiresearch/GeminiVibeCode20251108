@@ -1,0 +1,5 @@
+{
+  "name": "GPU Kernel Translator",
+  "description": "An application to translate GPU kernel optimization code between CUDA, Triton, and Mojo using the Gemini API, designed for high-performance computing developers.",
+  "requestFramePermissions": []
+}
