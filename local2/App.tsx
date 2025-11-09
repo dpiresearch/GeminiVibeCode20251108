@@ -31,6 +31,7 @@ const App: React.FC = () => {
   const [sshTestResult, setSSHTestResult] = useState<string>('');
 
   const [activities, setActivities] = useState<ActivityEntry[]>([]);
+  const [showActivityLog, setShowActivityLog] = useState<boolean>(true);
 
   const addActivity = useCallback((
     type: ActivityEntry['type'],
@@ -127,10 +128,14 @@ const App: React.FC = () => {
       return;
     }
 
-    const isReVerification = feedback.trim() !== '' && previousPackagedScript !== '';
+    // Check if we should use feedback for re-verification
+    // Use feedback if: (1) user provided feedback, OR (2) we have previous error from failed verification
+    const hasFeedback = feedback.trim() !== '';
+    const hasPreviousError = previousPackagedScript !== '' && previousVerificationError.trim() !== '';
+    const isReVerification = hasFeedback || hasPreviousError;
     
     if (isReVerification) {
-      addActivity('info', 'Verify Kernel Button Pressed (Re-verification)', `Re-verifying with feedback incorporated`);
+      addActivity('info', 'Verify Kernel Button Pressed (Re-verification)', `🔄 Re-verifying with feedback${hasFeedback ? ' (user feedback provided)' : ' (using previous error)'}`);
     } else {
       addActivity('info', 'Verify Kernel Button Pressed', `Verifying ${targetLanguage} code on remote server`);
     }
@@ -149,7 +154,7 @@ const App: React.FC = () => {
       // Prepare feedback if available
       const verificationFeedback = isReVerification ? {
         previousScript: previousPackagedScript,
-        userFeedback: feedback,
+        userFeedback: hasFeedback ? feedback : 'The previous script failed. Please fix all errors and generate a working version.',
         previousError: previousVerificationError
       } : undefined;
       
@@ -163,8 +168,8 @@ const App: React.FC = () => {
       setPreviousPackagedScript(packagedScript);
       setPreviousVerificationError(executionError);
       
-      // Clear feedback after using it
-      if (isReVerification) {
+      // Clear user feedback after using it (but keep tracking previous errors for auto-retry)
+      if (hasFeedback) {
         setFeedback('');
         setShowFeedback(false);
       }
@@ -269,11 +274,10 @@ const App: React.FC = () => {
         </div>
       </header>
       
-      <main className="flex-grow flex flex-col gap-4 p-4 lg:p-6">
-        {/* Activity Log */}
-        <ActivityLog activities={activities} onClear={clearActivities} />
-        
-        <div className="flex-1 flex flex-col lg:flex-row gap-4">
+      <main className="flex-grow flex gap-4 p-4 lg:p-6 overflow-hidden min-h-0">
+        {/* Main Content Area - Code Panels */}
+        <div className="flex-1 flex flex-col gap-4 min-w-0 min-h-0 overflow-auto">
+          <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
             <CodePanel
               label="Source"
               language={sourceLanguage}
@@ -282,15 +286,15 @@ const App: React.FC = () => {
               onCodeChange={setSourceCode}
             />
             <div className="flex justify-center items-center">
-                <button
-                    onClick={swapLanguages}
-                    className="p-2 bg-gray-700 rounded-full hover:bg-cyan-500 transition-colors duration-200 transform lg:rotate-0 rotate-90"
-                    title="Swap Languages"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                    </svg>
-                </button>
+              <button
+                onClick={swapLanguages}
+                className="p-2 bg-gray-700 rounded-full hover:bg-cyan-500 transition-colors duration-200 transform lg:rotate-0 rotate-90"
+                title="Swap Languages"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </button>
             </div>
             <CodePanel
               label="Translation"
@@ -302,10 +306,10 @@ const App: React.FC = () => {
               isVerifying={isVerifying}
               onShowFeedback={() => setShowFeedback(!showFeedback)}
             />
-        </div>
+          </div>
         
         {showFeedback && (
-          <div className="bg-gray-800 rounded-lg shadow-xl border border-gray-700 p-4 flex flex-col gap-3">
+          <div className="bg-gray-800 rounded-lg shadow-xl border border-amber-500 p-4 flex flex-col gap-3">
             <h3 className="text-md font-semibold text-amber-400">Provide Feedback</h3>
             <p className="text-sm text-gray-400">
               Paste any errors or describe issues below. You can then either:
@@ -376,13 +380,72 @@ const App: React.FC = () => {
             </div>
         )}
 
-        {(isVerifying || verificationResult || verificationError) && !sshTestResult && (
+          {/* Auto-retry indicator */}
+          {!isVerifying && previousPackagedScript && previousVerificationError && !showFeedback && (
+            <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-3 flex items-start gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div className="flex-1">
+                <p className="text-sm text-blue-300 font-semibold mb-1">🔄 Auto-Retry Available</p>
+                <p className="text-xs text-blue-200/80">
+                  Previous verification failed. Click <strong>"Verify Kernel"</strong> again to automatically retry with error corrections.
+                  Or click <strong>"Provide Feedback"</strong> to add specific instructions.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setPreviousPackagedScript('');
+                  setPreviousVerificationError('');
+                }}
+                className="text-blue-400 hover:text-blue-300 transition-colors"
+                title="Clear auto-retry"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
+
+          {(isVerifying || verificationResult || verificationError) && !sshTestResult && (
             <VerificationPanel
-                isLoading={isVerifying}
-                error={verificationError}
-                result={verificationResult}
+              isLoading={isVerifying}
+              error={verificationError}
+              result={verificationResult}
             />
-        )}
+          )}
+        </div>
+        
+        {/* Activity Log Sidebar */}
+        <div className={`flex flex-col transition-all duration-300 flex-shrink-0 ${showActivityLog ? 'w-80' : 'w-12'}`}>
+          {/* Toggle Button */}
+          <button
+            onClick={() => setShowActivityLog(!showActivityLog)}
+            className="flex items-center justify-center p-2 bg-gray-800 hover:bg-gray-700 rounded-lg mb-2 transition-colors border border-gray-700 flex-shrink-0"
+            title={showActivityLog ? 'Hide Activity Log' : 'Show Activity Log'}
+          >
+            {showActivityLog ? (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+                <span className="ml-2 text-sm text-gray-400">Hide Log</span>
+              </>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+              </svg>
+            )}
+          </button>
+          
+          {/* Activity Log */}
+          {showActivityLog && (
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <ActivityLog activities={activities} onClear={clearActivities} />
+            </div>
+          )}
+        </div>
       </main>
 
       <footer className="sticky bottom-0 left-0 right-0 p-4 bg-gray-800/50 backdrop-blur-sm border-t border-gray-700">

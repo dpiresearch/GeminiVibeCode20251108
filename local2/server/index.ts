@@ -150,6 +150,8 @@ app.post('/api/verify', async (req: Request, res: Response) => {
     console.log(`Previous script length: ${feedback.previousScript.length}`);
     console.log(`Feedback length: ${feedback.userFeedback.length}`);
     console.log(`Previous error length: ${feedback.previousError.length}`);
+    console.log(`User feedback: ${feedback.userFeedback.substring(0, 200)}${feedback.userFeedback.length > 200 ? '...' : ''}`);
+    console.log(`Previous error (first 200 chars): ${feedback.previousError.substring(0, 200)}${feedback.previousError.length > 200 ? '...' : ''}`);
   }
 
   const logs: string[] = [];
