@@ -1,0 +1,200 @@
+    8  apt install python3-triton
+    9  pwd
+   10  git clone git@github.com:modular/mojo-gpu-puzzles.git
+   11  pwd
+   12  git clone https://github.com/modular/mojo-gpu-puzzles.git
+   13  pip install mojo
+   14  apt install python3-mojo
+   15  cat /etc/os-release
+   16  mkdir -p ~/miniconda3
+   17  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+   18  bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+   19  rm ~/miniconda3/miniconda.sh
+   20  which conda
+   21  conda create --name gpu
+   22  cd miniconda3/
+   23  ls
+   24  cd bin
+   25  ls
+   26  pwd
+   27  export PATH=/root/miniconda3/bin:$PATH
+   28  echo $PATH
+   29  which conda
+   30  conda create --name gpu
+   31  conda activate gpu
+   32  conda init
+   33  conda activate gpu
+   34  pwd
+   35  cd Triton-Puzzles/
+   36  . triton_env/bin/activate
+   37  pwd
+   38  ls
+   39  which python
+   40  python --version
+   41  ls
+   42  python exp.py
+   43  pwd
+   44  which conda
+   45  conda activate gpu
+   46  pip install mojo
+   47  pip install triton
+   48  pwd
+   49  ls
+   50  curl -fsSL https://pixi.sh/install.sh | sh
+   51  . ~/.bashrc 
+   52  which pixi
+   53  pixi self-update
+   54  pwd
+   55  cd mojo-gpu-puzzles/
+   56  pixi run mojo/python solutions/p01/p01.mojo 
+   57  pixi run tests p01
+   58  pixi run mojo solutions/p01/p01.mojo 
+   59  pixi run python solutions/p01/p01.mojo 
+   60  pwd
+   61  cd solutions/p01/
+   62  vi p01.mojo 
+   63  cd ../..
+   64  history -500 | grep pixi
+   65  history
+   66  pixi run mojo solutions/p01/p01.mojo 
+   67  pwd
+   68  cd exp
+   69  ls
+   70  cd ../exp
+   71  cd ..
+   72  ls
+   73  cd mojo-gpu-puzzles/
+   74  ls
+   75  cd solutions/
+   76  ls
+   77  pwd
+   78  ls
+   79  cd 
+   80  ls
+   81  cd mojo-gpu-puzzles/
+   82  ls
+   83  mkdir exp
+   84  cd exp
+   85  vi exp.mojo
+   86  history
+   87  pixi run mojo exp.mojo 
+   88  pwd
+   89  ls
+   90  less exp.mojo 
+   91  pwd
+   92  ls
+   93  vi exp1.mojo
+   94  ls -ltr
+   95  pixi run mojo exp1.mojo 
+   96  pwd
+   97  cd ../..
+   98  git clone https://github.com/srush/Triton-Puzzles.git
+   99  pwd
+  100  ls -ltr
+  101  conda info --envs
+  102  conda activate gpu
+  103  pixi run mojo exp1.mojo 
+  104  pwd
+  105  ls
+  106  cd mojo-gpu-puzzles/
+  107  ls
+  108  cd exp
+  109  ls
+  110  pixi run mojo exp1.mojo 
+  111  pwd
+  112  cd ../..ls
+  113  cd ../..
+  114  ls
+  115  cd Triton-Puzzles/
+  116  ls
+  117  # Example for ROCm 6.0 (version number may change):
+  118  pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.0/
+  119  which pipx
+  120  apt install python3-pip
+  121  which pip
+  122  # Example for ROCm 6.0 (version number may change):
+  123  pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.0/
+  124  apt install python3-torch python3-torchvision python3-torchaudio
+  125  apt install python3-torch
+  126  apt install torch
+  127  apt install python3-torch
+  128  apt install python3
+  129  sudo apt install python3-full
+  130  python3 -m venv triton_env
+  131  source triton_env/bin/activate
+  132  pip install triton
+  133  # Example for ROCm 6.0 (version number may change):
+  134  pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.0/
+  135  pwd
+  136  ls
+  137  pwd
+  138  ls
+  139  pwd
+  140  ls
+  141  vi exp.py
+  142  python3 exp.py
+  143  pwd
+  144  cd ..
+  145  ls -ltr
+  146  cd mojo-gpu-puzzles/
+  147  ls
+  148  cd exp
+  149  ls
+  150  pixi run mojo exp1.mojo 
+  151  history | grep triton_env
+  152  pwd
+  153  cd ../../Triton-Puzzles/
+  154  pwd
+  155  cd ..
+  156  source Triton-Puzzles/triton_env/bin/activate
+  157  pwd
+  158  ls
+  159  vi packaged_1762642962017.py 
+  160  pwd
+  161  ls
+  162  ls -ltr
+  163  date
+  164  ls -ltr
+  165  ls 
+  166  ls -ltr
+  167  cd /
+  168  ls
+  169  ls -ltr
+  170  cd root
+  171  ls
+  172  ls -ltr
+  173  date
+  174  pwd
+  175  ls -ltr
+  176  less packaged_1108_165838.py 
+  177  ls -ltr
+  178  diff packaged_1108_170639.py packaged_1108_170742.py
+  179  ls -ltr
+  180  less packaged_1108_170742.py
+  181  less packaged_1108_170901.py
+  182  ls -ltr
+  183  diff packaged_1108_170639.py packaged_1108_171153.py
+  184  ls -ltr
+  185  . "/root/.cursor-server/cli/servers/Stable-df79b2380cd32922cad03529b0dc0c946c311850/server/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh"
+  186  ls
+  187  pwd
+  188  git clone https://github.com/yogesh1801/amd-submission.git
+  189  pwd
+  190  ls
+  191  ls -ltr
+  192  cd amd-submission/
+  193  ls
+  194  history
+  195  history -200
+  196  history 200
+  197  python packaged_1108_181741.py 
+  198  ls Triton-Puzzles/
+  199  pwd
+  200  cd ./Triton-Puzzles/
+  201  . triton_env/bin/activate
+  202  cd ~
+  203  ls -ltr
+  204  python3 packaged_1108_181741.py 
+  205  history -200 > history_200.log
+  206  pwd
+  207  history 200 > history_200.log
